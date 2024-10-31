@@ -1,0 +1,159 @@
+class CartaoDeCredito {
+    private String numero;
+    private String nomeTitular;
+    private String cpfTitular;
+    private float limite;
+    private float saldo;
+    private float taxaCashback;
+
+    public CartaoDeCredito(String numero, String nomeTitular, float limite) {
+        this.numero = numero;
+        this.nomeTitular = nomeTitular;
+        this.limite = limite;
+        this.saldo = limite;
+        this.taxaCashback = 0.0f;
+    }
+
+    public CartaoDeCredito(String numero, String nomeTitular, String cpfTitular, float limite, float taxaCashback) {
+        this.numero = numero;
+        this.nomeTitular = nomeTitular;
+        this.cpfTitular = cpfTitular;
+        this.limite = limite;
+        this.saldo = limite;
+        this.taxaCashback = taxaCashback;
+    }
+
+    public float getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(float saldo) {
+        this.saldo = saldo;
+    }
+
+    public float getLimite() {
+        return limite;
+    }
+
+    public void setLimite(float limite) {
+        this.limite = limite;
+    }
+
+    public float getTaxaCashback() {
+        return taxaCashback;
+    }
+
+    public void setTaxaCashback(float taxaCashback) {
+        this.taxaCashback = taxaCashback;
+    }
+
+    public void consultarSaldo() {
+        System.out.println("Saldo disponível: R$" + getSaldo());
+    }
+
+    public void consultarLimite() {
+        System.out.println("Limite do cartão: R$" + getLimite());
+    }
+
+    public void realizarTransacao(float valor) {
+        if (valor <= getSaldo()) {
+            setSaldo(getSaldo() - valor);
+            System.out.println("Compra básica realizada! Novo saldo: R$" + getSaldo());
+        } else {
+            System.out.println("Saldo insuficiente para a compra.");
+        }
+    }
+
+    public void realizarTransacao(float valor, boolean comCashback) {
+        if (valor <= getSaldo()) {
+            float cashback = valor * taxaCashback;
+            setSaldo(getSaldo() - valor + cashback);
+            System.out.println("Compra com cashback realizada! Cashback de: R$" + cashback);
+            System.out.println("Novo saldo: R$" + getSaldo());
+        } else {
+            System.out.println("Saldo insuficiente para a compra com cashback.");
+        }
+    }
+
+    public void alterarLimite(float novoLimite) {
+        setLimite(novoLimite);
+        setSaldo(novoLimite);
+        System.out.println("Novo limite definido: R$" + getLimite());
+    }
+}
+
+import java.util.Scanner;
+
+public class Principal {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Cadastro do Cartão");
+        System.out.print("Número do cartão: ");
+        String numero = scanner.nextLine();
+        System.out.print("Nome do titular: ");
+        String nomeTitular = scanner.nextLine();
+        System.out.print("Deseja configurar um limite personalizado e taxa de cashback? (s/n): ");
+        char resposta = scanner.next().charAt(0);
+        scanner.nextLine();
+
+        CartaoDeCredito cartao;
+        if (resposta == 's' || resposta == 'S') {
+            System.out.print("CPF do titular: ");
+            String cpfTitular = scanner.nextLine();
+            System.out.print("Limite personalizado: ");
+            float limite = scanner.nextFloat();
+            System.out.print("Taxa de cashback (exemplo: 0,05 para 5%): ");
+            float taxaCashback = scanner.nextFloat();
+
+            cartao = new CartaoDeCredito(numero, nomeTitular, cpfTitular, limite, taxaCashback);
+        } else {
+            System.out.print("Limite padrão: ");
+            float limite = scanner.nextFloat();
+            cartao = new CartaoDeCredito(numero, nomeTitular, limite);
+        }
+
+        int opcao;
+        do {
+            System.out.println("\nEscolha uma opção:");
+            System.out.println("1. Realizar Compra Básica");
+            System.out.println("2. Realizar Compra com Cashback");
+            System.out.println("3. Consultar Limite");
+            System.out.println("4. Consultar Saldo");
+            System.out.println("5. Alterar Limite");
+            System.out.println("6. Sair");
+            opcao = scanner.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    System.out.print("Valor da compra: ");
+                    float valorCompraBasica = scanner.nextFloat();
+                    cartao.realizarTransacao(valorCompraBasica);
+                    break;
+                case 2:
+                    System.out.print("Valor da compra com cashback: ");
+                    float valorCompraCashback = scanner.nextFloat();
+                    cartao.realizarTransacao(valorCompraCashback, true);
+                    break;
+                case 3:
+                    cartao.consultarLimite();
+                    break;
+                case 4:
+                    cartao.consultarSaldo();
+                    break;
+                case 5:
+                    System.out.print("Novo limite: ");
+                    float novoLimite = scanner.nextFloat();
+                    cartao.alterarLimite(novoLimite);
+                    break;
+                case 6:
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        } while (opcao != 6);
+
+        scanner.close();
+    }
+}
