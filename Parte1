@@ -1,0 +1,82 @@
+import java.util.Scanner;
+class CartaoDeCredito {
+
+    String numero;
+    String nomeTitular;
+    String cpfTitular;
+    float limite;
+    float saldo;
+
+    public CartaoDeCredito(String numero, String nomeTitular, String cpfTitular, float limite) {
+        this.numero = numero;
+        this.nomeTitular = nomeTitular;
+        this.cpfTitular = cpfTitular;
+        this.limite = limite;
+        this.saldo = limite;
+    }
+
+    public void consultarSaldo() {
+        System.out.println("Saldo disponível: R$" + saldo);
+    }
+
+    public void consultarLimite() {
+        System.out.println("Limite do cartão: R$" + limite);
+    }
+
+    public void realizarTransacao(float valor) {
+        if (valor <= saldo) {
+            saldo -= valor;
+            System.out.println("Transação realizada! Novo saldo: R$" + saldo);
+        } else {
+            System.out.println("Transação não permitida. Saldo insuficiente.");
+        }
+    }
+}
+
+public class Principal {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Número do cartão: ");
+        String numero = scanner.nextLine();
+        System.out.print("Nome do titular: ");
+        String nomeTitular = scanner.nextLine();
+        System.out.print("CPF do titular: ");
+        String cpfTitular = scanner.nextLine();
+        System.out.print("Limite do cartão: ");
+        float limite = scanner.nextFloat();
+
+        CartaoDeCredito cartao = new CartaoDeCredito(numero, nomeTitular, cpfTitular, limite);
+
+        int opcao;
+        do {
+            System.out.println("\nEscolha uma opção:");
+            System.out.println("1. Realizar Transação");
+            System.out.println("2. Consultar Limite");
+            System.out.println("3. Consultar Saldo");
+            System.out.println("4. Sair");
+            opcao = scanner.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    System.out.print("Valor da transação: ");
+                    float valor = scanner.nextFloat();
+                    cartao.realizarTransacao(valor);
+                    break;
+                case 2:
+                    cartao.consultarLimite();
+                    break;
+                case 3:
+                    cartao.consultarSaldo();
+                    break;
+                case 4:
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        } while (opcao != 4);
+
+        scanner.close();
+    }
+}
